@@ -1,0 +1,38 @@
+{
+  "name": "sway-toggl",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "build": "tsc && cp src/*.svg dist"
+  },
+  "keywords": [
+    "sway",
+    "swaywm",
+    "toggl",
+    "toggl-track"
+  ],
+  "author": "Svante Bengtson <svante@swantzter.se>",
+  "license": "MIT",
+  "description": "Helpful utilities for sway and toggl track",
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "ini": "^4.1.3",
+    "node-notifier": "^10.0.1",
+    "node-sway": "^2.1.4",
+    "xdg-basedir": "^5.1.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "@types/ini": "^4.1.1",
+    "@types/node": "^22.0.0",
+    "@types/node-notifier": "^8.0.5",
+    "eslint": "^9.8.0",
+    "neostandard": "^0.11.1",
+    "tsx": "^4.16.3",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.0-alpha.60"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "extends": "@tsconfig/node20",
+  "compilerOptions": {
+    "outDir": "./dist",
+    // "resolveJsonModule": true,
+    // "inlineSources": true,
+    // "sourceRoot": "/",
+    // "noEmitHelpers": true,
+    // "importHelpers": true
+    "module": "NodeNext",
+    "moduleResolution": "Node16"
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.js",
+    "./*.config.mjs",
+    "./.*.js",
+    "./k6/*.js"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}
