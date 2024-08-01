@@ -21,6 +21,9 @@ function trackingReminder () {
       lastNotified = Date.now()
     }
   }
+  if (getIsTracking()) {
+    lastNotified = Date.now()
+  }
 }
 
 function printWaybar () {
