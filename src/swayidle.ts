@@ -6,11 +6,11 @@ let idle = false
 
 export async function startSwayidle () {
   const child = spawn('swayidle', ['-w',
-    'timeout', '120', 'echo 1',
-    'resume', 'echo 0',
-    'resume', 'echo 0',
+    'timeout', '120', 'echo 1', 'resume', 'echo 0',
     'before-sleep', 'echo 1',
     'after-resume', 'echo 0',
+    'lock', 'echo 1',
+    'unlock', 'echo 0',
   ])
 
   const rl = createInterface({
