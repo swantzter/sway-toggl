@@ -67,7 +67,7 @@ export async function refreshIsTracking () {
 
       currentEntry = body as TimeEntry | null
     } else {
-      if (res.status === 429) {
+      if (res.status === 429 || res.status === 402) {
         cooldown = 1 + lastCooldown
         // implement a backoff strategy here, this will keep counting up if
         // we keep failing after waiting
@@ -205,7 +205,7 @@ export async function sendTimelineData () {
         timeline.splice(0, lastIdx + 1)
       }
     } else {
-      if (res.status === 429) {
+      if (res.status === 429 || res.status === 402) {
         cooldown = 1 + lastCooldown
         // implement a backoff strategy here, this will keep counting up if
         // we keep failing after waiting
@@ -293,7 +293,7 @@ export async function refreshMetadata () {
       togglMeta = body as TogglMeta | null
       togglMetaFetched = Date.now()
     } else {
-      if (res.status === 429) {
+      if (res.status === 429 || res.status === 402) {
         cooldown = 1 + lastCooldown
         // implement a backoff strategy here, this will keep counting up if
         // we keep failing after waiting

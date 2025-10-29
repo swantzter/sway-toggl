@@ -93,7 +93,7 @@ setInterval(() => {
     .catch((err: unknown) => {
       console.error(err)
     })
-}, 10_000)
+}, 2.5 * 60 * 1000)
 
 setInterval(() => {
   try {
