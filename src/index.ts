@@ -5,6 +5,17 @@ import './swayipc.js'
 import notifier from 'node-notifier'
 import { getCurrentEntry, getIsTracking, getProjectName, getTaskName, refreshIsTracking, refreshMetadata, sendTimelineData } from './toggl.js'
 import { intervalToDuration, parseISO } from 'date-fns'
+import { parseArgs } from 'node:util'
+import { sendIronbarCommand } from './ironbaripc.js'
+
+const args = parseArgs({
+  options: {
+    mode: {
+      type: 'string',
+      default: 'waybar',
+    },
+  },
+})
 
 let lastNotified = -Infinity
 function trackingReminder () {
@@ -57,6 +68,24 @@ function printWaybar () {
   }))
 }
 
+let ironbarDisabled = false
+function printIronbar () {
+  const curr = getCurrentEntry()
+  if (curr) {
+    if (ironbarDisabled) {
+      sendIronbarCommand({ command: 'style', subcommand: 'remove_class', module_name: 'toggl', name: 'disabled' })
+      ironbarDisabled = false
+    }
+    console.log('󰐥')
+  } else {
+    if (!ironbarDisabled) {
+      sendIronbarCommand({ command: 'style', subcommand: 'add_class', module_name: 'toggl', name: 'disabled' })
+      ironbarDisabled = true
+    }
+    console.log('󰐥')
+  }
+}
+
 async function run () {
   try {
     await refreshMetadata()
@@ -97,7 +126,11 @@ setInterval(() => {
 
 setInterval(() => {
   try {
-    printWaybar()
+    if (args.values.mode === 'ironbar') {
+      printIronbar()
+    } else {
+      printWaybar()
+    }
   } catch (err) {
     console.error('failed to print waybar data', err)
   }
