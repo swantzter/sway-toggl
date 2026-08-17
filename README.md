@@ -1,12 +1,13 @@
 # Sway Toggl
 
-This is some helpful utilities for sway and toggl track, namely it does:
+This is some helpful utilities for sway (and other wayland compositors, like
+jay) and toggl track, namely it does:
 
 1. Send a tracking reminder at a regular interval if you're not tracking your
    time. By default this is every 5 minutes but can be configured (see below)
-2. Send timeline data to toggl's API, based on what you've got focused in sway.
-   So in case you forgot to track you can figure it out based on what you were
-   doing on your computer.
+2. Send timeline data to toggl's API, based on what you've got focused in your
+   compositor. So in case you forgot to track you can figure it out based on
+   what you were doing on your computer.
 3. Print waybar custom module compatible json so you can show if/what you're
    tracking.
    Example module:
@@ -33,6 +34,45 @@ This is some helpful utilities for sway and toggl track, namely it does:
      color: @cl_fore;
    }
    ```
+
+## Compositor support
+
+There are two backends for figuring out what you have focused, selected with
+`--backend`:
+
+- `sway` uses the sway IPC socket, and works on sway (and anything else that
+  implements its IPC protocol).
+- `wlr` talks the wayland `zwlr_foreign_toplevel_manager_v1` protocol directly
+  to the compositor, and works on [jay](https://github.com/mahkoh/jay) and most
+  other wlroots-based compositors.
+
+The default is `--backend auto` which picks `sway` if `SWAYSOCK` is set and
+`wlr` otherwise, so usually you don't need to pass anything.
+
+Idle detection is done with `swayidle` in both cases, which despite the name is
+compositor agnostic: it uses the `ext-idle-notify-v1` wayland protocol
+(swayidle >= 1.8), which jay implements.
+
+### Jay
+
+Jay only advertises the foreign-toplevel and idle-notify protocols to clients
+that have been granted the corresponding capabilities. Add client rules to your
+jay config (`~/.config/jay/config.toml`):
+
+```toml
+[[clients]]
+match.comm = "node"
+capabilities = ["foreign-toplevel-manager"]
+
+[[clients]]
+match.comm = "swayidle"
+capabilities = ["idle-notifier"]
+```
+
+Note that `match.comm = "node"` grants this to every node process; you can
+narrow it down with e.g. `match.exe-regex` or a dedicated wrapper script if
+you prefer. Alternatively you can start the whole thing through
+`jay run-privileged`, which grants all capabilities.
 
 ## Configuration
 
