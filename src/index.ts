@@ -1,7 +1,6 @@
 import path from 'node:path'
 import config from './config.js'
 import { getIsIdle } from './swayidle.js'
-import './swayipc.js'
 import notifier from 'node-notifier'
 import { getCurrentEntry, getIsTracking, getProjectName, getTaskName, refreshIsTracking, refreshMetadata, sendTimelineData } from './toggl.js'
 import { intervalToDuration, parseISO } from 'date-fns'
@@ -14,8 +13,24 @@ const args = parseArgs({
       type: 'string',
       default: 'waybar',
     },
+    backend: {
+      type: 'string',
+      default: 'auto',
+    },
   },
 })
+
+const backend = args.values.backend === 'auto'
+  ? (process.env.SWAYSOCK != null ? 'sway' : 'wlr')
+  : args.values.backend
+
+if (backend === 'sway') {
+  await import('./swayipc.js')
+} else if (backend === 'wlr') {
+  await import('./wlrtoplevel.js')
+} else {
+  throw new TypeError(`Unknown backend "${backend}", expected "auto", "sway", or "wlr"`)
+}
 
 let lastNotified = -Infinity
 function trackingReminder () {
