@@ -96,13 +96,17 @@ interface TimelineEvent {
 const timeline: TimelineEvent[] = []
 let recordingEntry: Omit<TimelineEvent, 'end_time'> | undefined
 
-export function startTimelineEntry (data: Pick<TimelineEvent, 'filename' | 'title' | 'idle'>) {
-  if (recordingEntry != null) stopTimelineEntry()
+function unixNow () {
+  return Math.round(Date.now() / 1000)
+}
+
+export function startTimelineEntry (data: Pick<TimelineEvent, 'filename' | 'title' | 'idle'>, at = unixNow()) {
+  if (recordingEntry != null) stopTimelineEntry(at)
 
   // so, if a thing we just looked at got discarded for not being looked at long
   // enough, and we're back at at looking on it, revive it as the recordingEntry
   const lastEntry = timeline.at(-1)
-  if (lastEntry != null && lastEntry.filename === data.filename && lastEntry.title === data.title) {
+  if (lastEntry != null && lastEntry.filename === data.filename && lastEntry.title === data.title && lastEntry.idle === data.idle) {
     recordingEntry = timeline.pop()
     return
   }
@@ -111,7 +115,7 @@ export function startTimelineEntry (data: Pick<TimelineEvent, 'filename' | 'titl
   recordingEntry = {
     ...data,
     id: randomInt(281474976710655),
-    start_time: Math.round(Date.now() / 1000),
+    start_time: at,
     desktop_id: config.options.desktopId,
   }
 }
@@ -148,9 +152,18 @@ export function setTimelineEntryTitle (title: string) {
   }, 10_000)
 }
 
-export function stopTimelineEntry () {
+// splits the recording entry around a stretch the machine spent suspended,
+// which is recorded as idle
+export function markTimelineSuspended (from: number, to: number) {
   if (recordingEntry == null) return
-  const endTime = Math.round(Date.now() / 1000)
+  const { filename, title, idle } = recordingEntry
+
+  startTimelineEntry({ filename, title, idle: true }, from)
+  startTimelineEntry({ filename, title, idle }, to)
+}
+
+export function stopTimelineEntry (endTime = unixNow()) {
+  if (recordingEntry == null) return
 
   // we only record things looked at longer than 10 seconds
   if (endTime - recordingEntry.start_time < 10) {

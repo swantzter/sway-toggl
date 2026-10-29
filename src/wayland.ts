@@ -128,6 +128,10 @@ export class WaylandClient {
     this.handlers.delete(objectId)
   }
 
+  newId () {
+    return this.nextId++
+  }
+
   send (objectId: number, opcode: number, writer?: MessageWriter) {
     const body = writer?.build() ?? Buffer.alloc(0)
     const header = Buffer.alloc(8)

@@ -110,11 +110,9 @@ const optionsProxy: OptionsConf = new Proxy({
   get (target, prop) {
     switch (prop) {
       case 'idleNotifyInterval': {
-        if (
-          fileConf?.options?.idle_notify_interval_seconds != null &&
-          !Number.isSafeInteger(parseInt(fileConf.options.idle_notify_interval_seconds as string))
-        ) {
-          return parseInt(fileConf.options.idle_notify_interval_seconds as string) * 1000
+        const seconds = parseInt(fileConf?.options?.idle_notify_interval_seconds as string)
+        if (Number.isSafeInteger(seconds) && seconds > 0) {
+          return seconds * 1000
         } else return target[prop]
       }
       case 'desktopId':

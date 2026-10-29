@@ -1,6 +1,6 @@
 import _SwayIPC from 'node-sway'
 import { setTimelineEntryTitle, startTimelineEntry, stopTimelineEntry } from './toggl.js'
-import { getIsIdle } from './swayidle.js'
+import { getIsIdle } from './idle.js'
 
 const SwayIPC = _SwayIPC.default
 
