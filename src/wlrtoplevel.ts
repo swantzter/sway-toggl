@@ -1,6 +1,6 @@
 import { MessageReader, WaylandClient } from './wayland.js'
 import { setTimelineEntryTitle, startTimelineEntry, stopTimelineEntry } from './toggl.js'
-import { getIsIdle } from './swayidle.js'
+import { getIsIdle } from './idle.js'
 
 // Activity reporting for compositors without the sway IPC (jay, and any other
 // compositor implementing wlr-foreign-toplevel-management). The compositor
